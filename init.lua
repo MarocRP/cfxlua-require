@@ -37,11 +37,12 @@ local package = {
 }
 
 local sentinel = msgpack.sentinel()
+local chunkName = debug_getinfo(1, 'S').source
 local resourceName = GetCurrentResourceName()
 local baseIdx = 2
 
 for i = baseIdx, 32 do
-    local src = debug_getinfo(i, 'S')?.short_src
+    local src = debug_getinfo(i, 'S').short_src
 
     if src == 'citizen:/scripting/lua/scheduler.lua' then
         baseIdx = i + 2
@@ -72,7 +73,7 @@ local function getModuleInfo(modName)
             return resourceName, modName
         end
 
-        if src ~= '@@require' then
+        if src ~= chunkName then
             resource = src:match('^@@([^/]+)/.+')
 
             if resource then
