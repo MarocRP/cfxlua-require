@@ -6,9 +6,17 @@
     Copyright © 2026 Linden <https://github.com/thelindat>
 ]]
 
+if runtime?.require then return end
+
 if package then
     warn('A module system is already initialised and will be overridden.')
 end
+
+runtime = runtime or {}
+runtime.require = {
+    author = GetResourceMetadata('require', 'author', 0),
+    version = GetResourceMetadata('require', 'version', 0),
+}
 
 -- Aggressively set upvalues to prevent other scripts from overwriting them and changing intended functionality
 local type = type
