@@ -49,6 +49,8 @@ for i = baseIdx, 32 do
     end
 end
 
+_ENV.package = package
+
 ---Resolves a module name to its target resource and resource-relative module path.
 ---@param modName string
 ---@return string
@@ -210,6 +212,47 @@ function require(modName)
     error(("%s"):format(table_concat(err, "\n\t")), 2)
 end
 
-_ENV.package = package
+---@param filePath string
+---@param mode? 't' Provided for syntax compatibility - always `'t'`.
+---@param env? table
+---@return function chunk
+---Loads and compiles a Lua file without executing it.
+function loadfile(filePath, mode, env)
+    if type(filePath) ~= 'string' then
+        error(("file path must be a string (received '%s')"):format(filePath), 2)
+    end
+
+    local chunk, err = loadModule(filePath, env)
+
+    if chunk then return chunk end
+
+    error(("file '%s' not found\n\t%s"):format(filePath, err), 2)
+end
+
+---@param filePath string
+---@return unknown ...
+---Loads and executes a Lua file without caching its result.
+function dofile(filePath)
+    return loadfile(filePath)()
+end
+
+---@param filePath string
+---@return table
+---Loads and decodes a JSON file relative to the calling resource.
+function json.load(filePath)
+    if type(filePath) ~= 'string' then
+        error(("file path must be a string (received '%s')"):format(filePath), 2)
+    end
+
+    local resource, modPath = getModuleInfo(filePath:gsub('%.', '/'))
+    local fileName = ('%s.json'):format(modPath)
+    local file = LoadResourceFile(resource, fileName)
+
+    if not file then
+        error(("json file '%s' not found\n\tno file '@%s/%s'"):format(filePath, resource, fileName), 2)
+    end
+
+    return json.decode(file)
+end
 
 return require
