@@ -26,6 +26,18 @@ Originally part of [ox_lib](https://github.com/overextended/ox_lib), this module
 | Resource-aware resolution | Automatically determines the calling resource for unqualified module names. |
 | Circular dependency detection | Raises an error when a module is required recursively while it is still being initialised. |
 
+## Changes from ox_lib
+- `package.loaded` is now mutable, matching the behaviour of Lua 5.4
+- Circular dependencies now use a sentinel value rather than `'__loading'`.
+- Loader errors now clear sentinel values and report information more clearly.
+- `loadfile`, `dofile`, functions are now provided, replacing the `lib.load` with Lua-like behaviour.
+- `lib.loadJson` is instead assigned to `json.load`.
+- Resource resolution using `debug.getinfo` now resolves the initial call depth and chunk name, rather than using static values.
+- Explicit error levels help distinguish module execution errors from search failures.
+- `require` now returns `loaderdata` when the module is first loaded, matching Lua behaviour.
+
+Note that ox_lib itself still provides both `lib.load` and `lib.loadJson` functions for backwards compatibility.
+
 ## License
 
 This project is licensed under [MPL-2.0](https://www.mozilla.org/en-US/MPL/2.0/). A complete copy of the license is included in [LICENSE](./LICENSE).
