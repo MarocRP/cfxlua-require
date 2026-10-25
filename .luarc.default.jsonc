@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "workspace.checkThirdParty": "Ask",
+  "workspace.userThirdParty": [
+    "/nvme0/dev/lua-addons/"
+  ],
+  "diagnostics.disable": [
+    "unbalanced-assignments",
+    "lowercase-global"
+  ]
+}
