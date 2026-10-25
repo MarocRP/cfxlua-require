@@ -38,6 +38,16 @@ local package = {
 
 local sentinel = msgpack.sentinel()
 local resourceName = GetCurrentResourceName()
+local baseIdx = 2
+
+for i = baseIdx, 32 do
+    local src = debug_getinfo(i, 'S')?.short_src
+
+    if src == 'citizen:/scripting/lua/scheduler.lua' then
+        baseIdx = i + 2
+        break
+    end
+end
 
 ---Resolves a module name to its target resource and resource-relative module path.
 ---@param modName string
@@ -51,7 +61,7 @@ local function getModuleInfo(modName)
         return resource, path or 'init'
     end
 
-    local idx = 4
+    local idx = baseIdx
 
     while true do
         local src = debug_getinfo(idx, 'S')?.source
@@ -60,7 +70,7 @@ local function getModuleInfo(modName)
             return resourceName, modName
         end
 
-        if src ~= 'require' then
+        if src ~= '@@require' then
             resource = src:match('^@@([^/]+)/.+')
 
             if resource then
