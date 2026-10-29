@@ -35,9 +35,10 @@ local resourceName = GetCurrentResourceName()
 local baseIdx = 2
 
 for i = baseIdx, 32 do
-    local src = debug_getinfo(i, 'S').short_src
+    local src = debug_getinfo(i, 'S')?.short_src
 
-    if src == 'citizen:/scripting/lua/scheduler.lua' then
+    -- this may be fragile with breaking updates and especially "enhanced"
+    if not src or src == 'citizen:/scripting/lua/scheduler.lua' then
         baseIdx = i + 2
         break
     end
